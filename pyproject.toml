@@ -12,3 +12,11 @@ dependencies = []
 
 [project.scripts]
 checkbox_submission_tools="checkbox_submission_tools.main:main"
+
+[dependency-groups]
+dev = [
+  "pytest"
+]
+lint = [
+  "ruff"
+]
