@@ -4,6 +4,14 @@ from contextlib import suppress
 from functools import partial
 
 
+def add_parser(subparser):
+    parser_journal = subparser.add_parser(
+        "journalctl", help="Print a readable Journalctl output from submission"
+    )
+    parser_journal.set_defaults(func=get_journal_text)
+    parser_journal.add_argument("submission_json_path")
+
+
 def fallback_formatter(formatters: list[str]):
     def _f(x: dict):
         formatters_i = iter(formatters)

@@ -1,17 +1,15 @@
 import sys
 import argparse
 
-from checkbox_submission_tools.journalctl import get_journal_text
+from checkbox_submission_tools import journalctl
+from checkbox_submission_tools import get_ids
 
 
 def parse_args(argv):
     parser = argparse.ArgumentParser("Checkbox submission tools")
     sp = parser.add_subparsers(help="actions", dest="subparser", required=True)
-    parser_journal = sp.add_parser(
-        "journalctl", help="Journalctl extraction utility"
-    )
-    parser_journal.set_defaults(func=get_journal_text)
-    parser_journal.add_argument("submission_json_path")
+    journalctl.add_parser(sp)
+    get_ids.add_parser(sp)
     return parser.parse_args(argv)
 
 
