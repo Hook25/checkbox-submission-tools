@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "checkbox-submission-tools"
 version = "0.1.0"
@@ -5,3 +9,6 @@ description = "Tool to work with checkbox submissions"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = []
+
+[project.scripts]
+checkbox_submission_tools="checkbox_submission_tools.main:main"
