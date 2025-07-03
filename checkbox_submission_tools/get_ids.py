@@ -2,12 +2,6 @@ import sys
 import json
 from itertools import chain
 
-"""
-get_ids(){
-  cat $1 | jq -r '[.results.[].full_id] + [."rejected-jobs".[].full_id] + [."resource-results".[].full_id] + [."attachment-results".[].full_id]' | jq -r '.[]' | sort | uniq > ids_$1;
-}
-"""
-
 
 def add_parser(subparser):
     parser = subparser.add_parser(
