@@ -3,10 +3,6 @@ import json
 
 from checkbox_submission_tools import utils
 
-"""
-  cat $1 | jq -r '.devices | map(.bus + " " + .driver + " " + .product) | .[]' | sort | uniq > devices_$1;
-"""
-
 
 def add_parser(subparser):
     parser = subparser.add_parser(
