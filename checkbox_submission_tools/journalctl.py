@@ -1,7 +1,8 @@
 import sys
 import json
-from contextlib import suppress
 from functools import partial
+
+from checkbox_submission_tools import utils
 
 
 def add_parser(subparser):
@@ -10,16 +11,6 @@ def add_parser(subparser):
     )
     parser_journal.set_defaults(func=get_journal_text)
     parser_journal.add_argument("submission_json_path")
-
-
-def fallback_formatter(formatters: list[str]):
-    def _f(x: dict):
-        formatters_i = iter(formatters)
-        while True:
-            with suppress(KeyError):
-                return next(formatters_i).format(**x)
-
-    return _f
 
 
 def get_journal_text(args):
@@ -40,5 +31,5 @@ def get_journal_text(args):
         raise SystemExit("Journalctl failed to collect in this submission")
     journal_out = journal_out["outputs"]["payload"]
 
-    journal_repr_iter = map((fallback_formatter(formatters)), journal_out)
+    journal_repr_iter = map(utils.fallback_formatter(formatters), journal_out)
     sys.stdout.writelines(journal_repr_iter)
