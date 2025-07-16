@@ -23,6 +23,9 @@ def get_journal_text(args):
     formatters = [
         "[{__MONOTONIC_TIMESTAMP}][{_SYSTEMD_UNIT}]: {MESSAGE}\n",
         "[{__MONOTONIC_TIMESTAMP}][{SYSLOG_IDENTIFIER}]: {MESSAGE}\n",
+        "[{__MONOTONIC_TIMESTAMP}][{GLIB_DOMAIN}]: {MESSAGE}\n",
+        "[{__MONOTONIC_TIMESTAMP}][pid: {_PID} gid: {_GID}]: {MESSAGE}\n",
+        "[{__MONOTONIC_TIMESTAMP}][???]: {MESSAGE}\n",
     ]
     with open(submission_path) as f:
         submission_json = json.load(f)
