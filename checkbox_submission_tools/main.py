@@ -1,9 +1,12 @@
 import sys
 import argparse
 
-from checkbox_submission_tools import get_ids
-from checkbox_submission_tools import journalctl
-from checkbox_submission_tools import get_devices
+from checkbox_submission_tools import (
+    get_ids,
+    journalctl,
+    get_devices,
+    get_submission_json,
+)
 
 
 def parse_args(argv):
@@ -12,6 +15,7 @@ def parse_args(argv):
     journalctl.add_parser(sp)
     get_ids.add_parser(sp)
     get_devices.add_parser(sp)
+    get_submission_json.add_parser(sp)
     return parser.parse_args(argv)
 
 

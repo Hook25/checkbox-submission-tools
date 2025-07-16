@@ -11,6 +11,11 @@ def add_parser(subparser):
     )
     parser_journal.set_defaults(func=get_journal_text)
     parser_journal.add_argument("submission_json_path")
+    parser_journal.add_argument(
+        "identifier_match",
+        help="Filter output to only matching unit/identifiers",
+        nargs="*",
+    )
 
 
 def get_journal_text(args):
