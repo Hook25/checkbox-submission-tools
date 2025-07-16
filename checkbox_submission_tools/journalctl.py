@@ -1,6 +1,5 @@
 import sys
 import json
-from functools import partial
 
 from checkbox_submission_tools import utils
 
