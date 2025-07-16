@@ -11,9 +11,6 @@ def realtime_to_humantime(timestamp_microseconds: int):
 
 def fallback_formatter(formatters: list[str]):
     def _f(x: dict):
-        if x.get("__REALTIME_TIMESTAMP"):
-            timestamp_microseconds = int(x["__REALTIME_TIMESTAMP"])
-            x["__REALTIME_TIMESTAMP"] = realtime_to_humantime(timestamp_microseconds)
         formatters_i = iter(formatters)
         while True:
             try:
