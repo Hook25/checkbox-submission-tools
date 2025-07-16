@@ -17,14 +17,21 @@ def add_parser(subparser):
     )
 
 
+def add_date_field(journal_entry: dict):
+    if journal_entry.get("__REALTIME_TIMESTAMP"):
+        timestamp_microseconds = int(journal_entry["__REALTIME_TIMESTAMP"])
+        journal_entry["HUMAN_TIMESTAMP"] = utils.realtime_to_humantime(timestamp_microseconds)
+    return journal_entry
+
+
 def get_journal_text(args):
     submission_path = args.submission_json_path
     formatters = [
-        "[{__MONOTONIC_TIMESTAMP}][{__REALTIME_TIMESTAMP}][{_SYSTEMD_UNIT}]: {MESSAGE}\n",
-        "[{__MONOTONIC_TIMESTAMP}][{__REALTIME_TIMESTAMP}][{SYSLOG_IDENTIFIER}]: {MESSAGE}\n",
-        "[{__MONOTONIC_TIMESTAMP}][{__REALTIME_TIMESTAMP}][{GLIB_DOMAIN}]: {MESSAGE}\n",
-        "[{__MONOTONIC_TIMESTAMP}][{__REALTIME_TIMESTAMP}][pid: {_PID} gid: {_GID}]: {MESSAGE}\n",
-        "[{__MONOTONIC_TIMESTAMP}][{__REALTIME_TIMESTAMP}][???]: {MESSAGE}\n",
+        "[{__MONOTONIC_TIMESTAMP}][{HUMAN_TIMESTAMP}][{_SYSTEMD_UNIT}]: {MESSAGE}\n",
+        "[{__MONOTONIC_TIMESTAMP}][{HUMAN_TIMESTAMP}][{SYSLOG_IDENTIFIER}]: {MESSAGE}\n",
+        "[{__MONOTONIC_TIMESTAMP}][{HUMAN_TIMESTAMP}][{GLIB_DOMAIN}]: {MESSAGE}\n",
+        "[{__MONOTONIC_TIMESTAMP}][{HUMAN_TIMESTAMP}][pid: {_PID} gid: {_GID}]: {MESSAGE}\n",
+        "[{__MONOTONIC_TIMESTAMP}][{HUMAN_TIMESTAMP}][???]: {MESSAGE}\n",
     ]
     with open(submission_path) as f:
         submission_json = json.load(f)
@@ -38,5 +45,7 @@ def get_journal_text(args):
         raise SystemExit("Journalctl failed to collect in this submission")
     journal_out = journal_out["outputs"]["payload"]
 
-    journal_repr_iter = map(utils.fallback_formatter(formatters), journal_out)
+    journal_human_dated = map(add_date_field, journal_out)
+
+    journal_repr_iter = map(utils.fallback_formatter(formatters), journal_human_dated)
     sys.stdout.writelines(journal_repr_iter)
