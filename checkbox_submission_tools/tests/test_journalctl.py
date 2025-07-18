@@ -27,7 +27,7 @@ class TestGetJournalText(TestCase):
                 }
             }
         }
-        journalctl.get_journal_text(Mock())
+        journalctl.get_journal_text(Mock(only_job=None))
         stdout_writelines_mock.assert_called()
 
     @patch("checkbox_submission_tools.journalctl.open", new=MagicMock())
@@ -52,5 +52,5 @@ class TestGetJournalText(TestCase):
                 }
             }
         }
-        journalctl.get_journal_text(Mock())
+        journalctl.get_journal_text(Mock(only_job=None))
         stdout_writelines_mock.assert_called()

@@ -1,5 +1,6 @@
 import sys
 import json
+import itertools
 
 from checkbox_submission_tools import utils
 
@@ -15,13 +16,46 @@ def add_parser(subparser):
         help="Filter output to only matching unit/identifiers",
         nargs="*",
     )
+    parser_journal.add_argument(
+        "--only-job",
+        help="Best effort filter to extract logs of a job id",
+    )
 
 
 def add_date_field(journal_entry: dict):
     if journal_entry.get("__REALTIME_TIMESTAMP"):
         timestamp_microseconds = int(journal_entry["__REALTIME_TIMESTAMP"])
-        journal_entry["HUMAN_TIMESTAMP"] = utils.realtime_to_humantime(timestamp_microseconds)
+        journal_entry["HUMAN_TIMESTAMP"] = utils.realtime_to_humantime(
+            timestamp_microseconds
+        )
     return journal_entry
+
+
+def find_start_job(journal_dicts: list[dict], job_id: str):
+    journal_dicts = iter(journal_dicts)
+    for entry in journal_dicts:
+        if "checkbox" not in entry.get("_SYSTEMD_UNIT", ""):
+            continue
+        if "INFO:plainbox.unified:Running" not in entry.get("MESSAGE", ""):
+            continue
+        if job_id not in entry["MESSAGE"]:
+            continue
+        return itertools.chain([entry], journal_dicts)
+    raise SystemExit(f"Job '{job_id}' is not in the logs!")
+
+
+def till_end_of_job(journal_dicts: list[dict]):
+    for x in journal_dicts:
+        if "checkbox" not in x.get("_SYSTEMD_UNIT", ""):
+            yield x
+        elif "INFO:plainbox.session.state" not in x.get("MESSAGE", ""):
+            yield x
+        # this can be MemoryJobResult, DiskJobResult etc.
+        elif "JobResult" not in x["MESSAGE"]:
+            yield x
+        else:
+            yield x
+            return
 
 
 def get_journal_text(args):
@@ -47,5 +81,13 @@ def get_journal_text(args):
 
     journal_human_dated = map(add_date_field, journal_out)
 
-    journal_repr_iter = map(utils.fallback_formatter(formatters), journal_human_dated)
+    if args.only_job:
+        journal_human_dated = find_start_job(
+            journal_human_dated, args.only_job
+        )
+        journal_human_dated = till_end_of_job(journal_human_dated)
+
+    journal_repr_iter = map(
+        utils.fallback_formatter(formatters), journal_human_dated
+    )
     sys.stdout.writelines(journal_repr_iter)
