@@ -27,6 +27,7 @@ def get_devices(args):
         [
             "{bus} ({category}): {driver} -> {product}\n",
             "{bus} ({category}): -> {product}\n",
+            "{bus} ({category}): -> {name}\n",
             "{bus}: {driver} -> {product}\n",
             "{bus}: {driver} -> {vendor}\n",
             "{bus}: {vendor}\n",
